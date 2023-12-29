@@ -7,10 +7,11 @@ import {Switch} from '../switch'
 function Toggle({children}) {
   const [on, setOn] = React.useState(false)
   const toggle = () => setOn(!on)
-
-  return React.Children.map(children, child =>
-    React.cloneElement(child, {on, toggle}),
-  )
+  return React.Children.map(children, child => {
+    return typeof child.type === 'string'
+      ? child
+      : React.cloneElement(child, {on, toggle})
+  })
 }
 
 function ToggleOn({on, children}) {
@@ -31,6 +32,7 @@ function App() {
       <Toggle>
         <ToggleOn>The button is on</ToggleOn>
         <ToggleOff>The button is off</ToggleOff>
+        <span>Hellooo</span>
         <ToggleButton />
       </Toggle>
     </div>
@@ -38,8 +40,3 @@ function App() {
 }
 
 export default App
-
-/*
-eslint
-  no-unused-vars: "off",
-*/
