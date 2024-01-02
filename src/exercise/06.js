@@ -3,6 +3,7 @@
 
 import * as React from 'react'
 import {Switch} from '../switch'
+import warning from 'warning'
 
 const callAll =
   (...fns) =>
@@ -38,6 +39,15 @@ function useToggle({
   const [state, dispatch] = React.useReducer(reducer, initialState)
   const onIsControlled = controlledOn != null
   const on = onIsControlled ? controlledOn : state.on
+
+  const {current: onWasControlled} = React.useRef(onIsControlled)
+  React.useEffect(() => {
+    warning(
+      !(onIsControlled && !onWasControlled) ||
+        !(!onIsControlled && onWasControlled),
+      `Components should not switch from uncontrolled to controlled (or vice versa). Check the \`on\` prop. Decide between using a controlled or uncontrolled for the lifetime of the component.`,
+    )
+  }, [onIsControlled, onWasControlled])
 
   function dispatchWithOnChange(action) {
     !onIsControlled && dispatch(action)
